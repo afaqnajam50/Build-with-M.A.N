@@ -230,7 +230,9 @@ let messagePollBusy = false;
 async function refreshInbox(){
   if(!sb || !currentUser) return;
   const keepThreadId = selectedConversationId;
-  const {data, error} = await sb.from("conversations").select("id, visitor_id, subject, created_at").order("created_at",{ascending:false});
+  let query = sb.from("conversations").select("id, visitor_id, subject, created_at");
+  if(!isAdmin) query = query.eq("visitor_id", currentUser.id);
+  const {data, error} = await query.order("created_at",{ascending:false});
   if(error){ statusMsg("inboxIntro","Could not load inbox: "+error.message); return; }
   const conversations = data || [];
   if(inboxInitialized && isAdmin){ const newOnes=conversations.filter(c=>!knownConversationIds.has(c.id)); if(newOnes.length) showToast("New visitor message/conversation received. Inbox updated."); }
@@ -242,16 +244,21 @@ async function refreshInbox(){
   if(keepThreadId && conversations.some(c=>c.id===keepThreadId)){ selectedConversationId=keepThreadId; el("threadPanel").classList.remove("hidden"); }
 }
 async function openThread(id){
+  if(!sb || !currentUser) return;
+  let query = sb.from("conversations").select("id,subject,visitor_id").eq("id",id);
+  if(!isAdmin) query = query.eq("visitor_id",currentUser.id);
+  const {data: conv, error: ce} = await query.single();
+  if(ce || !conv){selectedConversationId=null;showToast("Conversation nahi mil saki ya access allowed nahi.");return;}
   selectedConversationId = id;
-  const {data: conv, error: ce} = await sb.from("conversations").select("id,subject").eq("id",id).single();
-  if(ce){showToast("Cannot open conversation: "+ce.message);return;}
   el("threadTitle").textContent = conv.subject || "Conversation";
   el("threadPanel").classList.remove("hidden");
   el("deleteConversationBtn").classList.remove("hidden");
   await loadMessages();
 }
 async function loadMessages(){
-  if(!selectedConversationId) return;
+  if(!sb || !currentUser || !selectedConversationId) return;
+  const {data:ownerCheck,error:ownerError}=await sb.from("conversations").select("id,visitor_id").eq("id",selectedConversationId).maybeSingle();
+  if(ownerError || !ownerCheck || (!isAdmin && ownerCheck.visitor_id!==currentUser.id)){selectedConversationId=null;el("threadPanel").classList.add("hidden");return;}
   const {data,error} = await sb.from("messages").select("id,sender_id,body,created_at,attachment_name,attachment_path").eq("conversation_id",selectedConversationId).order("created_at",{ascending:true});
   if(error){showToast("Could not load messages: "+error.message);return;}
   const messages=data||[];
@@ -440,7 +447,8 @@ function setupAdminPanel(){
     el("deleteConversationBtn").classList.remove("hidden"); await refreshInbox();await refreshAdminAssets();await refreshAdminProjects();await refreshAdminChats();await refreshAdminSoftware();await loadPortfolioAssets();await loadSoftwareDownloads();
   };
   el("adminLogoutBtn").onclick=async()=>{
-    await sb.auth.signOut();currentUser=null;isAdmin=false;
+    await sb.auth.signOut();currentUser=null;isAdmin=false;selectedConversationId=null;
+    el("conversationList").innerHTML="";el("chatLog").innerHTML="";el("threadPanel").classList.add("hidden");showLoggedIn();
     el("adminLoginBtn").classList.remove("hidden");el("adminLogoutBtn").classList.add("hidden");
     el("adminUploadTools").classList.add("hidden");el("adminLockedNote").classList.remove("hidden");
     statusMsg("adminStatus","Signed out.");
@@ -470,7 +478,7 @@ async function initMessaging(){
     statusMsg("authStatus",error?error.message:(data.session?"Account created. You are signed in.":"Account created. Check your email to confirm, then sign in."));
     if(!error && data.session) await loadSession();
   };
-  el("logoutBtn").onclick=async()=>{await sb.auth.signOut();currentUser=null;isAdmin=false;showLoggedIn();el("conversationList").innerHTML="";el("threadPanel").classList.add("hidden");statusMsg("authStatus","Signed out.");};
+  el("logoutBtn").onclick=async()=>{await sb.auth.signOut();currentUser=null;isAdmin=false;selectedConversationId=null;knownConversationIds.clear();knownMessageIds.clear();showLoggedIn();el("conversationList").innerHTML="";el("chatLog").innerHTML="";el("threadPanel").classList.add("hidden");el("adminUploadTools").classList.add("hidden");el("adminLockedNote").classList.remove("hidden");el("adminLoginBtn").classList.remove("hidden");el("adminLogoutBtn").classList.add("hidden");statusMsg("authStatus","Signed out.");};
   el("refreshBtn").onclick=refreshInbox;
   el("startConversationBtn").onclick=async()=>{
     if(!currentUser)return;
@@ -501,6 +509,7 @@ async function loadSession(){
   const {data:{session}}=await sb.auth.getSession();
   currentUser=session?.user||null;
   isAdmin=currentUser?.app_metadata?.role==="admin";
+  if(!isAdmin){el("adminUploadTools").classList.add("hidden");el("adminLockedNote").classList.remove("hidden");el("adminLoginBtn").classList.remove("hidden");el("adminLogoutBtn").classList.add("hidden");}
   showLoggedIn();
   if(currentUser){
     statusMsg("authStatus",isAdmin?"Signed in as admin.":"Signed in.");
