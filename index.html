@@ -31,10 +31,11 @@
 .gallery-item{position:relative;overflow:hidden}
 .project-cover img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
 .project-cover{position:relative;overflow:hidden;min-height:150px}
+.admin-profile-preview{display:flex;gap:14px;align-items:center;margin:12px 0 22px;padding:12px;border:1px solid var(--line);border-radius:14px}.admin-profile-preview img{width:76px;height:76px;object-fit:cover;border-radius:50%;border:2px solid var(--blue)}.admin-profile-preview img.hidden{display:none}
 </style>
 </head>
 <body>
-<header class="nav"><div class="wrap navin"><a class="brand" href="#home">Build with <span>M.A.N</span></a><nav class="links"><a href="#about">About</a><a href="#skills">Skills</a><a href="#projects">Projects</a><a href="#gallery">Gallery</a><a href="#contact">Contact</a></nav><a class="btn" href="#admin">Admin ↗</a></div></header>
+<header class="nav"><div class="wrap navin"><a class="brand" href="#home">Build with <span>M.A.N</span></a><nav class="links"><a href="#about">About</a><a href="#skills">Skills</a><a href="#projects">Projects</a><a href="#gallery">Gallery</a><a href="#downloads">Downloads</a><a href="#contact">Contact</a></nav><a class="btn" href="#admin">Admin ↗</a></div></header>
 <main id="home" class="wrap">
 <section class="hero">
 <div><div class="eyebrow">Developer · Builder · Problem solver</div><h1>I build useful things for the <em>digital world.</em></h1><p class="lead">I'm M.A.N, a young web developer who creates responsive websites and practical software. I combine AI tools with coding to turn ideas into working projects.</p><div class="actions"><a class="btn" href="#projects">Explore my work ↘</a><a class="btn secondary" href="#contact">Contact me</a></div><div class="chips"><span class="chip">Web Development</span><span class="chip">Software Projects</span><span class="chip">AI-assisted coding</span></div></div>
@@ -47,6 +48,7 @@
 <article class="card project"><div class="project-cover"><span>TOOLS / 02</span></div><h3>Inventory Management</h3><p>A planned tool for keeping product records, stock levels and simple business information organized.</p><div class="tags"><span class="tag">Software</span><span class="tag">Database</span></div><div class="project-links"><a href="#contact">Discuss project ↗</a></div></article>
 <article class="card project"><div class="project-cover"><span>PORTFOLIO / 03</span></div><h3>Build with M.A.N</h3><p>This portfolio presents my skills, projects and a contact form for people who want to connect.</p><div class="tags"><span class="tag">HTML</span><span class="tag">CSS</span><span class="tag">JavaScript</span></div><div class="project-links"><a href="#contact">Send a message ↗</a></div></article>
 </div></section>
+<section id="downloads"><div class="section-head"><div class="eyebrow">Software downloads</div><h2>Software & setup files</h2><p>Sign in to download software setups published by the site owner. Download first, then install only software you trust.</p></div><div id="softwareDownloads" class="grid"><p class="hint">Sign in to see available downloads.</p></div></section>
 <section id="gallery"><div class="section-head"><div class="eyebrow">Photos & moments</div><h2>My gallery</h2><p>Use these spaces for your own photos, workspace, certificates or project screenshots.</p></div><div class="gallery"><div class="gallery-item"><span>＋</span><small>Photo 01</small></div><div class="gallery-item"><span>＋</span><small>Photo 02</small></div><div class="gallery-item"><span>＋</span><small>Photo 03</small></div><div class="gallery-item"><span>＋</span><small>Photo 04</small></div></div><p class="hint">Photos published by the site owner appear here.</p></section>
 <section id="contact"><div class="section-head"><div class="eyebrow">Get in touch</div><h2>Have an idea? Let's talk.</h2><p>Use the secure message center below to sign in, start a conversation and return later to read replies.</p></div><div class="contact-layout"><div class="contact-panel"><h3>Contact details</h3><p class="hint">Update these details with your public contact options.</p><div class="contact-row"><span>✉</span><div><b>Email</b><span>your-email@example.com</span></div></div><div class="contact-row"><span>⌘</span><div><b>GitHub</b><a href="https://github.com/" target="_blank" rel="noreferrer">Add your GitHub profile ↗</a></div></div><div class="contact-row"><span>⌖</span><div><b>Availability</b><span>Open to learning and suitable projects</span></div></div></div><div class="form-panel"><h3>Send me a private message</h3><p class="hint">Create a visitor account in the message centre to send a message and return later to read replies.</p><a class="btn" href="#live-messages">Open message centre ↗</a></div></div>
 
@@ -70,7 +72,8 @@
         <h3 id="threadTitle">Conversation</h3>
         <div id="chatLog" class="chatlog" aria-live="polite"></div>
         <div class="field"><label for="replyText">Write a message</label><textarea id="replyText" placeholder="Type your message..." maxlength="4000"></textarea></div>
-        <button class="btn" id="sendReplyBtn" type="button">Send message</button>
+        <div class="field"><label for="messageFile">Attach a file (optional, max 10 MB)</label><input id="messageFile" type="file"></div>
+        <div class="actions"><button class="btn" id="sendReplyBtn" type="button">Send message / file</button><button class="btn secondary hidden" id="deleteConversationBtn" type="button">Delete conversation</button></div>
         <p class="hint">Messages are stored in Supabase. Refresh the inbox to see new replies.</p>
       </div>
       <div id="newConversation">
@@ -119,6 +122,15 @@
         <p id="projectStatus" class="hint" role="status"></p>
         <h3 style="margin-top:22px">Your published projects</h3><div id="adminProjectsList"></div>
         <h3 style="margin-top:22px">Published profile/gallery images</h3><div id="adminAssetList"></div>
+        <h3 style="margin-top:28px">Publish software setup</h3>
+        <p class="hint">Upload an installer/setup file and add its name, version and optional website link. Signed-in users can download it.</p>
+        <div class="field"><label for="softwareTitle">Software name *</label><input id="softwareTitle" maxlength="120" placeholder="e.g. Inventory Manager Setup"></div>
+        <div class="field"><label for="softwareDescription">Description</label><textarea id="softwareDescription" maxlength="800" placeholder="What does this software do?"></textarea></div>
+        <div class="field"><label for="softwareVersion">Version</label><input id="softwareVersion" maxlength="40" placeholder="1.0.0"></div>
+        <div class="field"><label for="softwareUrl">Related website/live URL (optional)</label><input id="softwareUrl" type="url" maxlength="500" placeholder="https://example.com"></div>
+        <div class="field"><label for="softwareFile">Setup file *</label><input id="softwareFile" type="file"></div>
+        <button class="btn" id="publishSoftwareBtn" type="button">Upload setup</button><p id="softwareStatus" class="hint" role="status"></p>
+        <div id="adminSoftwareList"></div>
         <h3 style="margin-top:28px">Visitor chats</h3><p class="hint">Har visitor ki conversation alag nazar aayegi. Kisi chat ko khol kar reply kar sakte ho.</p><div id="adminChatList" class="admin-chat-list"><p class="hint">Login ke baad chats yahan load hongi.</p></div>
       </div>
       <p id="adminLockedNote" class="hint">Admin login ke baad upload controls nazar aayenge.</p>
@@ -235,17 +247,20 @@ async function openThread(id){
   if(ce){showToast("Cannot open conversation: "+ce.message);return;}
   el("threadTitle").textContent = conv.subject || "Conversation";
   el("threadPanel").classList.remove("hidden");
+  el("deleteConversationBtn").classList.remove("hidden");
   await loadMessages();
 }
 async function loadMessages(){
   if(!selectedConversationId) return;
-  const {data,error} = await sb.from("messages").select("id,sender_id,body,created_at").eq("conversation_id",selectedConversationId).order("created_at",{ascending:true});
+  const {data,error} = await sb.from("messages").select("id,sender_id,body,created_at,attachment_name,attachment_path").eq("conversation_id",selectedConversationId).order("created_at",{ascending:true});
   if(error){showToast("Could not load messages: "+error.message);return;}
   const messages=data||[];
   if(inboxInitialized && messages.some(m=>!knownMessageIds.has(m.id) && m.sender_id!==currentUser.id)){ showToast(isAdmin ? "New message from a visitor." : "You have a new reply from Build with M.A.N."); }
   messages.forEach(m=>knownMessageIds.add(m.id));
   const log=el("chatLog");
-  log.innerHTML=messages.map(m=>`<div class="bubble ${m.sender_id===currentUser.id?'me':''}"><div>${escapeHtml(m.body)}</div><div class="hint">${m.sender_id===currentUser.id?'You':(isAdmin?'Visitor':'Build with M.A.N')} · ${escapeHtml(timeLabel(m.created_at))}</div></div>`).join("") || '<p class="hint">No messages yet.</p>';
+  log.innerHTML=messages.map(m=>`<div class="bubble ${m.sender_id===currentUser.id?'me':''}"><div>${escapeHtml(m.body||"")}</div>${m.attachment_path?`<p><button type="button" class="btn secondary" data-download-message="${m.id}">Download ${escapeHtml(m.attachment_name||"attachment")}</button></p>`:""}<div class="hint">${m.sender_id===currentUser.id?'You':(isAdmin?'Visitor':'Build with M.A.N')} · ${escapeHtml(timeLabel(m.created_at))}</div>${isAdmin?`<button type="button" class="btn secondary" data-delete-message="${m.id}">Delete message</button>`:""}</div>`).join("") || '<p class="hint">No messages yet.</p>';
+  log.querySelectorAll("[data-download-message]").forEach(b=>b.onclick=()=>downloadMessageFile(messages.find(m=>m.id===b.dataset.downloadMessage)));
+  log.querySelectorAll("[data-delete-message]").forEach(b=>b.onclick=()=>deleteMessage(b.dataset.deleteMessage));
   log.scrollTop=log.scrollHeight;
 }
 async function sendToThread(text){
@@ -255,6 +270,73 @@ async function sendToThread(text){
   if(error){showToast("Message not sent: "+error.message);return;}
   el("replyText").value="";
   await loadMessages();
+}
+
+
+async function deleteMessage(id){
+ if(!confirm("Is message ko delete karna hai?")) return;
+ const {error}=await sb.from("messages").delete().eq("id",id);
+ if(error){showToast("Message delete nahi hua: "+error.message);return;}
+ await loadMessages();showToast("Message deleted.");
+}
+async function deleteCurrentConversation(){
+ if(!selectedConversationId || !confirm("Puri conversation aur uske messages delete karne hain?")) return;
+ const {error}=await sb.from("conversations").delete().eq("id",selectedConversationId);
+ if(error){showToast("Conversation delete nahi hui: "+error.message);return;}
+ selectedConversationId=null;el("threadPanel").classList.add("hidden");await refreshInbox();await refreshAdminChats();showToast("Conversation deleted.");
+}
+async function downloadMessageFile(m){
+ if(!m?.attachment_path)return;
+ const {data,error}=await sb.storage.from("message-files").createSignedUrl(m.attachment_path,60);
+ if(error){showToast("File download error: "+error.message);return;}
+ window.open(data.signedUrl,"_blank","noopener");
+}
+async function sendThreadMessage(){
+ if(!currentUser||!selectedConversationId)return;
+ const text=el("replyText").value.trim(),file=el("messageFile")?.files?.[0];
+ if(!text&&!file)return showToast("Message likho ya file select karo.");
+ let attachment_name=null,attachment_path=null;
+ if(file){
+   if(file.size>10*1024*1024)return showToast("File 10 MB se chhoti honi chahiye.");
+   attachment_name=file.name;
+   attachment_path=`${selectedConversationId}/${currentUser.id}/${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g,"_")}`;
+   const {error}=await sb.storage.from("message-files").upload(attachment_path,file,{upsert:false});
+   if(error)return showToast("File upload failed: "+error.message);
+ }
+ const {error}=await sb.from("messages").insert({conversation_id:selectedConversationId,sender_id:currentUser.id,body:text||"",attachment_name,attachment_path});
+ if(error){showToast("Message send nahi hua: "+error.message);return;}
+ el("replyText").value="";if(el("messageFile"))el("messageFile").value="";
+ await loadMessages();showToast("Message sent.");
+}
+async function loadSoftwareDownloads(){
+ const wrap=el("softwareDownloads");if(!wrap)return;
+ if(!currentUser){wrap.innerHTML='<p class="hint">Downloads dekhne ke liye sign in karo.</p>';return;}
+ const {data,error}=await sb.from("software_downloads").select("id,title,description,version,live_url,file_name,storage_path,created_at").order("created_at",{ascending:false});
+ if(error){wrap.innerHTML='<p class="hint">Downloads load nahi huay. SQL setup check karo: '+escapeHtml(error.message)+'</p>';return;}
+ wrap.innerHTML=(data||[]).map(x=>`<article class="card"><h3>${escapeHtml(x.title)}</h3><p>${escapeHtml(x.description||"")}</p><p class="hint">Version ${escapeHtml(x.version||"1.0")} · ${escapeHtml(x.file_name)}</p>${x.live_url?`<p><a href="${escapeHtml(x.live_url)}" target="_blank" rel="noopener">Project website ↗</a></p>`:""}<button class="btn" data-download-software="${x.id}">Download setup</button></article>`).join("")||'<p class="hint">Abhi koi setup publish nahi hua.</p>';
+ wrap.querySelectorAll("[data-download-software]").forEach(b=>b.onclick=async()=>{const x=data.find(y=>y.id===b.dataset.downloadSoftware);const {data:d,error:e}=await sb.storage.from("software-downloads").createSignedUrl(x.storage_path,120);if(e){showToast("Download error: "+e.message);return;}window.location.href=d.signedUrl;});
+}
+async function publishSoftware(){
+ const title=el("softwareTitle").value.trim(),description=el("softwareDescription").value.trim(),version=el("softwareVersion").value.trim()||"1.0",rawUrl=el("softwareUrl").value.trim(),file=el("softwareFile").files[0];
+ if(!currentUser||!isAdmin)return statusMsg("softwareStatus","Admin login required.");
+ if(!title||!file)return statusMsg("softwareStatus","Software name aur setup file zaroori hain.");
+ if(file.size>100*1024*1024)return statusMsg("softwareStatus","File 100 MB se chhoti honi chahiye.");
+ let live_url="";if(rawUrl){try{const u=new URL(rawUrl);if(!["http:","https:"].includes(u.protocol))throw 0;live_url=u.href;}catch{return statusMsg("softwareStatus","Website URL valid nahi.");}}
+ statusMsg("softwareStatus","Setup upload ho raha hai...");
+ const path=`${currentUser.id}/${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g,"_")}`;
+ const {error:upErr}=await sb.storage.from("software-downloads").upload(path,file,{upsert:false,contentType:file.type||"application/octet-stream"});
+ if(upErr)return statusMsg("softwareStatus","Upload error: "+upErr.message);
+ const {error}=await sb.from("software_downloads").insert({owner_id:currentUser.id,title,description,version,live_url,file_name:file.name,storage_path:path});
+ if(error){await sb.storage.from("software-downloads").remove([path]);return statusMsg("softwareStatus","Database error: "+error.message);}
+ statusMsg("softwareStatus","Setup publish ho gaya.");el("softwareTitle").value="";el("softwareDescription").value="";el("softwareVersion").value="";el("softwareUrl").value="";el("softwareFile").value="";
+ await loadSoftwareDownloads();await refreshAdminSoftware();
+}
+async function refreshAdminSoftware(){
+ if(!isAdmin)return;const list=el("adminSoftwareList");if(!list)return;
+ const {data,error}=await sb.from("software_downloads").select("id,title,file_name,storage_path").order("created_at",{ascending:false});
+ if(error){list.innerHTML='<p class="hint">'+escapeHtml(error.message)+'</p>';return;}
+ list.innerHTML=(data||[]).map(x=>`<div class="inbox-item"><b>${escapeHtml(x.title)}</b> · ${escapeHtml(x.file_name)} <button class="btn secondary" data-del-software="${x.id}">Delete</button></div>`).join("");
+ list.querySelectorAll("[data-del-software]").forEach(b=>b.onclick=async()=>{if(!confirm("Setup delete karna hai?"))return;const x=data.find(y=>y.id===b.dataset.delSoftware);const {error:e}=await sb.storage.from("software-downloads").remove([x.storage_path]);if(e)return showToast(e.message);const {error:de}=await sb.from("software_downloads").delete().eq("id",x.id);if(de)return showToast(de.message);await loadSoftwareDownloads();await refreshAdminSoftware();});
 }
 
 async function refreshAdminChats(){
@@ -355,7 +437,7 @@ function setupAdminPanel(){
     statusMsg("adminStatus","Admin login successful.");
     el("adminLoginBtn").classList.add("hidden");el("adminLogoutBtn").classList.remove("hidden");
     el("adminUploadTools").classList.remove("hidden");el("adminLockedNote").classList.add("hidden");
-    await refreshInbox();await refreshAdminAssets();await refreshAdminProjects();await refreshAdminChats();await loadPortfolioAssets();
+    el("deleteConversationBtn").classList.remove("hidden"); await refreshInbox();await refreshAdminAssets();await refreshAdminProjects();await refreshAdminChats();await refreshAdminSoftware();await loadPortfolioAssets();await loadSoftwareDownloads();
   };
   el("adminLogoutBtn").onclick=async()=>{
     await sb.auth.signOut();currentUser=null;isAdmin=false;
@@ -402,7 +484,9 @@ async function initMessaging(){
     el("subjectText").value="";el("firstMessage").value="";
     await refreshInbox();await openThread(conv.id);showToast("Conversation started.");
   };
-  el("sendReplyBtn").onclick=()=>sendToThread(el("replyText").value);
+  el("sendReplyBtn").onclick=sendThreadMessage;
+  el("deleteConversationBtn").onclick=deleteCurrentConversation;
+  el("publishSoftwareBtn").onclick=publishSoftware;
   await loadSession();
   await loadPortfolioAssets();
   // Poll the saved inbox so new conversations and replies appear without manual refresh.
@@ -420,7 +504,7 @@ async function loadSession(){
   showLoggedIn();
   if(currentUser){
     statusMsg("authStatus",isAdmin?"Signed in as admin.":"Signed in.");
-    await refreshInbox();
+    await refreshInbox();await loadSoftwareDownloads();
   }
 }
 if(el("authEmail")) initMessaging();
@@ -480,5 +564,52 @@ drop policy if exists "Admin can upload portfolio media" on storage.objects;
 create policy "Admin can upload portfolio media" on storage.objects for insert to authenticated with check (bucket_id = 'portfolio-media' and (auth.jwt()->'app_metadata'->>'role')='admin');
 drop policy if exists "Admin can delete portfolio media" on storage.objects;
 create policy "Admin can delete portfolio media" on storage.objects for delete to authenticated using (bucket_id = 'portfolio-media' and (auth.jwt()->'app_metadata'->>'role')='admin');
+
+-- Add these migration statements in Supabase SQL Editor too; HTML alone cannot add database columns/tables.
+alter table public.messages add column if not exists attachment_name text;
+alter table public.messages add column if not exists attachment_path text;
+create table if not exists public.software_downloads (
+ id uuid primary key default gen_random_uuid(),
+ owner_id uuid not null references auth.users(id) on delete cascade,
+ title text not null,
+ description text not null default '',
+ version text not null default '1.0',
+ live_url text not null default '',
+ file_name text not null,
+ storage_path text not null,
+ created_at timestamptz not null default now()
+);
+alter table public.software_downloads enable row level security;
+drop policy if exists "Signed in users can view software list" on public.software_downloads;
+create policy "Signed in users can view software list" on public.software_downloads for select to authenticated using (true);
+drop policy if exists "Admin can publish software" on public.software_downloads;
+create policy "Admin can publish software" on public.software_downloads for insert to authenticated with check ((auth.jwt()->'app_metadata'->>'role')='admin' and owner_id=auth.uid());
+drop policy if exists "Admin can delete software" on public.software_downloads;
+create policy "Admin can delete software" on public.software_downloads for delete to authenticated using ((auth.jwt()->'app_metadata'->>'role')='admin');
+-- Create PRIVATE buckets named software-downloads and message-files in Supabase Storage.
+-- Message attachments require signed-in users to read files through signed URLs.
+drop policy if exists "Signed in users can read message files" on storage.objects;
+create policy "Signed in users can read message files" on storage.objects for select to authenticated using (bucket_id='message-files');
+drop policy if exists "Signed in users can upload message files" on storage.objects;
+create policy "Signed in users can upload message files" on storage.objects for insert to authenticated with check (bucket_id='message-files');
+drop policy if exists "Users can delete own message files" on storage.objects;
+create policy "Users can delete own message files" on storage.objects for delete to authenticated using (bucket_id='message-files' and (auth.jwt()->'app_metadata'->>'role')='admin');
+-- Allow file-only messages with an empty body.
+alter table public.messages drop constraint if exists messages_body_check;
+alter table public.messages add constraint messages_body_check check (char_length(body) between 0 and 4000);
+drop policy if exists "Admin uploads software files" on storage.objects;
+create policy "Admin uploads software files" on storage.objects for insert to authenticated with check (bucket_id='software-downloads' and (auth.jwt()->'app_metadata'->>'role')='admin');
+drop policy if exists "Admin deletes software files" on storage.objects;
+create policy "Admin deletes software files" on storage.objects for delete to authenticated using (bucket_id='software-downloads' and (auth.jwt()->'app_metadata'->>'role')='admin');
+-- Admin may delete individual messages; visitors may delete their own conversation and its messages only if policies allow.
+drop policy if exists "Admin can delete messages" on public.messages;
+create policy "Admin can delete messages" on public.messages for delete to authenticated using ((auth.jwt()->'app_metadata'->>'role')='admin');
+drop policy if exists "Visitor can delete own messages" on public.messages;
+create policy "Visitor can delete own messages" on public.messages for delete to authenticated using (exists(select 1 from public.conversations c where c.id=conversation_id and c.visitor_id=auth.uid()));
+drop policy if exists "Admin can delete conversations" on public.conversations;
+create policy "Admin can delete conversations" on public.conversations for delete to authenticated using ((auth.jwt()->'app_metadata'->>'role')='admin');
+drop policy if exists "Visitor can delete own conversations" on public.conversations;
+create policy "Visitor can delete own conversations" on public.conversations for delete to authenticated using (visitor_id=auth.uid());
+
 -->
 </body></html>
