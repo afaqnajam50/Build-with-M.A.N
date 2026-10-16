@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://afaqnajam50.github.io/Build-with-M.A.N/sitemap.xml
